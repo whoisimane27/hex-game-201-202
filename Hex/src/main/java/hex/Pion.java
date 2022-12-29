@@ -11,4 +11,12 @@ public enum Pion {
 	public String toString() {
 		return ""+this.symbole;  
 	}
+
+	public static Pion get(char c) {
+		for (Pion p : Pion.values())
+			if (p.symbole == c)
+				return p;
+		throw new IllegalArgumentException(
+				"symbole inconnu " + c);
+	}
 }
