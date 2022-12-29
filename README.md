@@ -1,5 +1,4 @@
 # hex-game-201-202
-test
 ## Membres du groupe
 
 ESTRADE Yoan 201
