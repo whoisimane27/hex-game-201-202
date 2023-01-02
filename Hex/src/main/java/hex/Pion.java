@@ -14,7 +14,7 @@ public enum Pion {
 
 	public static Pion get(char c) {
 		for (Pion p : Pion.values())
-			if (p.symbole == c)
+			if (p.symbole == c) 
 				return p;
 		throw new IllegalArgumentException(
 				"symbole inconnu " + c);

@@ -19,8 +19,8 @@ class PionTest {
 		assertTrue(Pion.Vide == Pion.get('.'));
 		
 		assertThrows(IllegalArgumentException.class,
-				() -> {
-					Pion.get('*');
+				() -> { 
+					Pion.get('*');  
 				}
 				);
 	}

@@ -1,6 +1,7 @@
 package main.java.hex;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 public class Plateau {
 	private final static int TAILLE_MAX = 26;
@@ -62,6 +63,21 @@ public class Plateau {
 		t[col][lig] = pion; 
 		suivant();
 	}
+
+	public void jouerAléatoirement() {
+			Random rand = new Random();
+			char col = (char)(rand.nextInt(taille()) + 'A');
+			Random rand2 = new Random();
+			int lig= rand2.nextInt(taille()+1);
+			String coord = col+""+lig;
+			System.out.println(coord);
+			if(estValide(coord) && getCase(coord)==Pion.Vide){
+				jouer(coord);
+			}
+			else{
+				jouerAléatoirement();
+			}
+	}
 	
 	private int getColonne(String coord) {
 		return coord.charAt(0) - PREMIERE_COLONNE; // ex 'B' -'A' == 1
@@ -72,8 +88,13 @@ public class Plateau {
 	}
 	
 	public boolean estValide(String coord) {
-		int col = getColonne (coord);
-		int lig = getLigne(coord); 
+		int col, lig;
+		try {
+			col = getColonne (coord);
+			lig = getLigne(coord); 
+		}catch(Exception e) {
+			return false;
+		}
 		if (col <0 || col >= taille())
 			return false;
 		if (lig <0 || lig >= taille())
@@ -88,15 +109,14 @@ public class Plateau {
 		return t[col][lig];
 	} 
 	
-	//renvoie la coordonne de la case en dessous 
+	//renvoi la coordonnee en dessous de celle mise en parametre
 	public String coordEnDessous(String coord) {
 		assert estValide(coord);
 		String newCoord =""+  coord.charAt(0) + (getLigne(coord)+ PREMIERE_LIGNE + 1);
 		return newCoord; 
 		
 	} 
-	
-	//a supprimer peut etre
+	//renvoi la coordonnee au dessus de celle mise en parametre
 	public String coordAuDessus(String coord) {
 		assert estValide(coord);
 		String newCoord =""+  coord.charAt(0) + (getLigne(coord) + PREMIERE_LIGNE - 1);  
@@ -104,6 +124,7 @@ public class Plateau {
 		
 	}
 	
+	//renvoi la coordonnee a droite de celle mise en parametre
 	public String coordAdroite(String coord) {
 		assert estValide(coord);
 		char c = coord.charAt(0);
@@ -111,82 +132,80 @@ public class Plateau {
 		String newCoord= c + coord.substring(1);
 		return newCoord;
 	}
+	
+	//renvoi la coordonnee a gauche de celle mise en parametre
 	public String coordAgauche(String coord) {
-		assert estValide(coord);
 		char c = coord.charAt(0); 
 		c= (char)((int)c -1);  
 		String newCoord= c + coord.substring(1);
 		return newCoord;
 	}
 	
-	// renvoi une array List des coordonnes qui sont en dessous de coord si elles sont valides 
-	public ArrayList<String> AllCoordsEnDessous(String coord) {
-		assert estValide(coord);
-		ArrayList<String> coords = new ArrayList<>();
-		String bas = coordEnDessous(coord);
-		if(estValide(bas)) coords.add(bas); 
-		String basGauche = coordAgauche(coordEnDessous(coord));
-		if(estValide(basGauche)) coords.add(basGauche);
-		String basDroite = coordAdroite(coordEnDessous(coord)); 
-		if(estValide(basDroite)) coords.add(basDroite);
-		
-		return coords;
-	}
 	
-	public ArrayList<String> AllCoordsADroite(String coord) {
-		assert estValide(coord);
-		ArrayList<String> coords = new ArrayList<>();
-		String droite = coordAdroite(coord);
-		if(estValide(droite)) coords.add(droite); 
-		String hautDroit = coordAuDessus(coordAdroite(coord));
-		if(estValide(hautDroit)) coords.add(hautDroit);
-		String basDroite = coordAdroite(coordEnDessous(coord)); 
-		if(estValide(basDroite)) coords.add(basDroite);
-		return coords;
-	}
-	
-	public boolean estCheminVersBas(String coord) {
-		boolean estChemin = false;
-		assert estValide(coord);
-		if(getCase(coord)!= Pion.Rond) return false;
-		if(getLigne(coord) + 1== taille()) {return true;};
-		ArrayList<String> coordsEnBas = AllCoordsEnDessous(coord);
-		for (String s : coordsEnBas) {
-			estChemin= estChemin || estCheminVersBas(s);
-		}
-		return estChemin;
-	}
-	
-	public boolean estCheminVersDroite(String coord) {
-		boolean estChemin = false;
-		assert estValide(coord);
-		if(getCase(coord)!= Pion.Croix) return false;
-		if(getColonne(coord)+1== taille()) {return true;};
-		ArrayList<String> coordsAdroite = AllCoordsADroite(coord);
-		for (String s : coordsAdroite) {
-			estChemin= estChemin || estCheminVersDroite(s);
-		}
-		return estChemin;
-	}
-	
-	
+	//Verifie si la partie est fini et qu'il ya un gagnant
 	public int VerifPartie() { 
 		int gagnant = 0; 
 
 		String coord = "" + (char)PREMIERE_COLONNE + PREMIERE_LIGNE;
 		//Verifie si un chemin de Nord a Sud avec les pions O existe
 		for(int i = 0; i<taille();i ++) {
-			if (estCheminVersBas(coord))
+			if (getCase(coord) == Pion.Rond && estCheminVers(coord, null, 'S'))
 				return gagnant = 2;
 			coord = coordAdroite(coord);
 		}
+		//Verifie si un chemin d'Est a Ouest avec les pions X existe
 		coord = "" + (char)PREMIERE_COLONNE + PREMIERE_LIGNE;
 		for(int i = 0; i<taille();i ++) {
-			if (estCheminVersDroite(coord)) return gagnant = 1;
+			if (getCase(coord) == Pion.Croix && estCheminVers(coord, null, 'O'))
+				return gagnant = 1;
 			coord = coordEnDessous(coord);
-		}
+		} 
 		return gagnant;
 
 	}
+	
+	//renvoi toutes les coordonnee valides autour de celle passee en parametre 
+	public ArrayList<String> coordAutour(String coord) {
+		assert estValide(coord);
+		ArrayList<String> coords = new ArrayList<>();
+		String bas = coordEnDessous(coord);
+		if(estValide(bas)) coords.add(bas); 
+		
+		String haut = coordAuDessus(coord);
+		if(estValide(haut)) coords.add(haut);
+		
+		String droite = coordAdroite(coord);
+		if(estValide(droite)) coords.add(droite); 
+		
+		String gauche= coordAgauche(coord);
+		if(estValide(gauche)) coords.add(gauche); 
+		
+		String hautDroite= coordAuDessus(coordAdroite(coord));
+		if(estValide(hautDroite)) coords.add(hautDroite); 
+		
+		String basGauche = coordAgauche(coordEnDessous(coord));
+		if(estValide(basGauche)) coords.add(basGauche);
+		
+		return coords;
+	}
+	
+	
+	
+	//renvoie si un chemin de la (coord) vers la (direction) existe
+	//Direction peut prendre deux valeurs 'S'(Sud) 'O'(Ouest), on  peut facilement ajouter les autres directions mais ce n'est pas utile dans ce cas
+	public boolean estCheminVers (String coord,  ArrayList<String> array, char direction) {
+		boolean estChemin= false;
+		if(array == null) array = new ArrayList<String>();
+		array.add(coord);
+		if(getLigne(coord) + 1== taille() && direction == 'S') {return true;}
+		if(getColonne(coord) + 1== taille() && direction == 'O') {return true;}
+		ArrayList<String> coordsAutour = coordAutour(coord);
+		for (String s : coordsAutour) {
+			if(!array.contains(s) && getCase(coord) == getCase(s)) {
+				estChemin= estChemin || estCheminVers(s, array, direction);
+			}
+		}
+		return estChemin; 
+	} 
 
 }
