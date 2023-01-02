@@ -1,6 +1,7 @@
 package main.java.hex;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 public class Plateau {
 	private final static int TAILLE_MAX = 26;
@@ -61,6 +62,21 @@ public class Plateau {
 		int lig = getLigne(coord);
 		t[col][lig] = pion; 
 		suivant();
+	}
+
+	public void jouerAléatoirement() {
+			Random rand = new Random();
+			char col = (char)(rand.nextInt(taille()) + 'A');
+			Random rand2 = new Random();
+			int lig= rand2.nextInt(taille()+1);
+			String coord = col+""+lig;
+			System.out.println(coord);
+			if(estValide(coord) && getCase(coord)==Pion.Vide){
+				jouer(coord);
+			}
+			else{
+				jouerAléatoirement();
+			}
 	}
 	
 	private int getColonne(String coord) {
