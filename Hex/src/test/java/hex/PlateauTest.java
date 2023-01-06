@@ -22,9 +22,9 @@ class PlateauTest {
 				"1 . . . .\n" + 
 				"2  . . . .\n" + 
 				"3   . . . .\n" + 
-				"4    . . . .\n", p.toString()); 
+				"4    . . . .\n", p.toString());
 		p.jouer("B2"); 
-		assertEquals(Pion.Croix, p.getCase("B2"));
+		assertEquals(Pion.Croix, p.getCase("B2")); 
 		p.jouer("C2");   
 		assertEquals(Pion.Rond, p.getCase("C2")); 
 		

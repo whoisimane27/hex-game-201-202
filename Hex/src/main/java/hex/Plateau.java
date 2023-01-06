@@ -2,7 +2,7 @@ package main.java.hex;
 
 import java.util.ArrayList;
 
-public class Plateau {
+public class Plateau implements IPlateau {
 	private final static int TAILLE_MAX = 26;
 	private final static int NB_JOUEURS = 2;
 	private final static int PREMIERE_COLONNE = 'A';
@@ -12,7 +12,7 @@ public class Plateau {
 	private int joueur= 0;
 	
 	public void suivant() {
-		joueur = (joueur + 1) % NB_JOUEURS;
+		joueur = (joueur + 1) % NB_JOUEURS; 
 	}
 	
 	public Plateau(int taille) {
@@ -25,6 +25,7 @@ public class Plateau {
 	}
 	
 	//renvoie la longueur du plateau
+	@Override
 	public int taille() {
 		return t.length;
 	} 
@@ -52,7 +53,7 @@ public class Plateau {
 		return s;
 	}
 	
-	
+	@Override
 	public void jouer(String coord) {
 		assert estValide(coord);
 		assert getCase(coord) == Pion.Vide;
@@ -71,10 +72,11 @@ public class Plateau {
 		return Integer.parseInt(coord.substring(1))-PREMIERE_LIGNE; // ex '2' - '1' == 1
 	}
 	
+	@Override
 	public boolean estValide(String coord) {
 		int col, lig;
 		try {
-			col = getColonne (coord);
+			col = getColonne (coord); 
 			lig = getLigne(coord); 
 		}catch(Exception e) {
 			return false;
@@ -124,9 +126,10 @@ public class Plateau {
 		String newCoord= c + coord.substring(1);
 		return newCoord;
 	}
-	
+	 
 	
 	//Verifie si la partie est fini et qu'il ya un gagnant
+	@Override
 	public int VerifPartie() { 
 		int gagnant = 0; 
 
@@ -190,6 +193,6 @@ public class Plateau {
 			}
 		}
 		return estChemin; 
-	} 
+	}
 
 }
